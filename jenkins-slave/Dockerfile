@@ -1,0 +1,29 @@
+FROM ubuntu:14.04
+MAINTAINER SONTN
+
+RUN apt-get update
+RUN apt-get install software-properties-common  -y
+RUN add-apt-repository  ppa:openjdk-r/ppa
+RUN apt-get update
+RUN apt-get install git wget openssh-server openjdk-8-jdk  -y
+
+RUN sed -ri 's/^session\s+required\s+pam_loginuid.so$/session optional pam_loginuid.so/' /etc/pam.d/sshd
+
+RUN useradd jenkins -m -d /home/jenkins -s /bin/bash
+
+RUN mkdir /home/jenkins/.ssh
+
+COPY /files/authorized_keys /home/jenkins/.ssh/authorized_keys
+
+RUN chown -R jenkins: /home/jenkins
+RUN chmod 600 /home/jenkins/.ssh/authorized_keys
+RUN chmod 700 /home/jenkins/.ssh
+RUN echo "jenkins  ALL=(ALL)  ALL" >> etc/sudoers
+
+# Set Name Servers
+COPY /files/resolv.conf /etc/resolv.conf
+
+# Expose SSH port and run SSHD
+EXPOSE 22
+CMD ["/usr/sbin/sshd","-D"]
+ 
