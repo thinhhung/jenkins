@@ -20,6 +20,7 @@ RUN chmod 600 /home/jenkins/.ssh/authorized_keys
 RUN chmod 700 /home/jenkins/.ssh
 RUN echo "jenkins  ALL=(ALL)  ALL" >> etc/sudoers
 
+RUN mkdir -p /var/run/sshd
 # Set Name Servers
 COPY /files/resolv.conf /etc/resolv.conf
 
