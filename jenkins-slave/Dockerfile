@@ -14,10 +14,13 @@ RUN useradd jenkins -m -d /home/jenkins -s /bin/bash
 RUN mkdir /home/jenkins/.ssh
 
 COPY /files/authorized_keys /home/jenkins/.ssh/authorized_keys
+COPY /files/config /home/jenkins/.ssh/config
 
 RUN chown -R jenkins: /home/jenkins
 RUN chmod 600 /home/jenkins/.ssh/authorized_keys
+RUN chmod 644 /home/jenkins/.ssh/config
 RUN chmod 700 /home/jenkins/.ssh
+
 RUN echo "jenkins  ALL=(ALL)  ALL" >> etc/sudoers
 
 RUN mkdir -p /var/run/sshd
