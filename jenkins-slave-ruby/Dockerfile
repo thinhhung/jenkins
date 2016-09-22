@@ -1,0 +1,3 @@
+FROM sontn1988/jenkins-slaves
+MAINTAINER SONTN
+RUN 
