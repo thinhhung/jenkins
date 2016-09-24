@@ -94,8 +94,13 @@ RUN echo "mysql-server mysql-server/root_password password root" | debconf-set-s
     && echo "mysql-server mysql-server/root_password_again password root" | debconf-set-selections \
     && apt-get install -y mysql-server-5.6
 
-RUN apt-get install  libmysqlclient-dev libxslt-dev libxml2-dev imagemagick libmagickwand-dev libxslt1-dev supervisor -y
+RUN apt-get install  libmysqlclient-dev libxslt-dev libxml2-dev imagemagick libmagickwand-dev libxslt1-dev -y
 
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY entrypoint.sh /tmp/entrypoint.sh
+
+RUN chmod +x /tmp/entrypoint.sh
+
+ENTRYPOINT ["/tmp/entrypoint.sh"]
+
+
 EXPOSE 22
-CMD [ "/usr/bin/supervisord" ]
