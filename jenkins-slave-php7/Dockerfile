@@ -1,15 +1,7 @@
 FROM sontn1988/jenkins-slaves
 
-MAINTAINER Tran Duc Thang <thangtd90@gmail.com> - SonTN (sontn1988@gmail.com)
+MAINTAINER SonTN (sontn1988@gmail.com)
 
-RUN DEBIAN_FRONTEND=noninteractive
-RUN locale-gen en_US.UTF-8
-
-ENV LANGUAGE=en_US.UTF-8
-ENV LC_ALL=en_US.UTF-8
-ENV LC_CTYPE=UTF-8
-ENV LANG=en_US.UTF-8
-ENV TERM xterm
 
 # Install "software-properties-common" (for the "add-apt-repository")
 RUN apt-get update && apt-get install -y \
@@ -20,8 +12,8 @@ RUN echo "mysql-server mysql-server/root_password password root" | debconf-set-s
     && echo "mysql-server mysql-server/root_password_again password root" | debconf-set-selections \
     && apt-get install -y mysql-server-5.6
 
-# Install Redis, Nginx, Mongo
-RUN apt-get -y --force-yes install nginx redis-server mongodb supervisor \
+# Install Redis, Mongo
+RUN apt-get -y --force-yes install redis-server mongodb  \
     && mkdir -p /data/db
 
 # Add the "PHP 7" ppa
@@ -73,6 +65,8 @@ RUN curl -s http://getcomposer.org/installer | php \
     && mv composer.phar /usr/local/bin/composer \
     && composer global require "squizlabs/php_codesniffer=*"
 
+RUN chmod +x /usr/local/bin/composer
+
 # Load xdebug Zend extension with phpunit command
 RUN echo "alias phpunit='php -dzend_extension=xdebug.so /var/www/laravel/vendor/bin/phpunit'" >> ~/.bashrc
 
@@ -88,23 +82,16 @@ RUN curl -sL https://deb.nodesource.com/setup_6.x | bash - \
     && n stable \
     && npm install -g gulp bower eslint babel-eslint eslint-plugin-react
 
-# Install SASS
-RUN curl -O http://ftp.ruby-lang.org/pub/ruby/stable-snapshot.tar.gz \
-    && tar -xzvf stable-snapshot.tar.gz \
-    && cd stable-snapshot/ \
-    && ./configure \
-    && make \
-    && make install \
-    && gem install sass
 
 # Clean up
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 WORKDIR /var/www/html
-EXPOSE 80 443
 
-COPY default.conf /etc/nginx/sites-available/default
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY entrypoint.sh /tmp/entrypoint.sh
 
-# Default command
-CMD ["/usr/bin/supervisord"]
+RUN chmod +x /tmp/entrypoint.sh
+
+ENTRYPOINT ["/tmp/entrypoint.sh"]
+
+EXPOSE 22
