@@ -25,6 +25,3 @@ RUN mkdir -p /var/run/sshd
 # Set Name Servers
 COPY /files/resolv.conf /etc/resolv.conf
 
-# Expose SSH port and run SSHD
-EXPOSE 22
-CMD ["/usr/sbin/sshd", "-D"]
