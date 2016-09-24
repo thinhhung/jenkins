@@ -97,5 +97,5 @@ RUN echo "mysql-server mysql-server/root_password password root" | debconf-set-s
 RUN apt-get install  libmysqlclient-dev libxslt-dev libxml2-dev imagemagick libmagickwand-dev libxslt1-dev supervisor -y
 
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
+EXPOSE 22
 CMD [ "/usr/bin/supervisord" ]
